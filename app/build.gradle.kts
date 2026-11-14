@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -39,7 +40,7 @@ android {
     }
 
     androidResources {
-        noCompress += "tflite"
+        noCompress += listOf("tflite", "db")
     }
 }
 dependencies {
@@ -59,6 +60,12 @@ dependencies {
     implementation("androidx.camera:camera-view:$cameraxVersion")
 
     implementation("org.tensorflow:tensorflow-lite:2.16.1")
+
+    val roomVersion = "2.7.1"
+
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

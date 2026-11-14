@@ -6,8 +6,8 @@ import kotlin.math.min
 
 class YoloPostProcessor(
     private val inputSize: Float = 640f,
-    private val confidenceThreshold: Float = 0.02f,
-    private val iouThreshold: Float = 0.3f
+    private val confidenceThreshold: Float = 0.3f,
+    private val iouThreshold: Float = 0.35f
 ) {
     fun processFloat(output: Array<FloatArray>, numElements: Int): List<DetectionResult> {
         var maxConfInFrame = 0f
@@ -57,7 +57,8 @@ class YoloPostProcessor(
         }
 
         Log.d("YOLO_DEBUG", "Shape [$dim1, $dim2] | MaxConf = $maxConfInFrame | Found = ${candidates.size}")
-        return applyNMS(candidates)
+        val best = candidates.maxByOrNull { it.confidence }
+        return if (best != null) listOf(best) else emptyList()
     }
 
     private fun addNormalizedBox(

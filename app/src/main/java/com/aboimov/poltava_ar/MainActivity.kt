@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +39,7 @@ class MainActivity : ComponentActivity() {
                                 .fillMaxWidth()
                                 .statusBarsPadding()
                                 .background(
-                                    Color.White.copy(alpha = 0.8f),
+                                    Color.White,
                                     shape = RoundedCornerShape(0.0f, 0.0f, 20.0f, 20.0f)
                                 )
                                 .height(50.dp),
@@ -46,8 +48,9 @@ class MainActivity : ComponentActivity() {
                             Text(
                                 text = "Poltava-AR",
                                 textAlign = TextAlign.Center,
-                                color = Color.Gray,
-                                fontSize = 25.sp
+                                color = Color.DarkGray,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
                             )
                         }
                     }
