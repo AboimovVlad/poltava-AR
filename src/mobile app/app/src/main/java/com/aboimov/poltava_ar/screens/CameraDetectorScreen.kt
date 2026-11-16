@@ -21,12 +21,14 @@ import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.aboimov.poltava_ar.database.AppDatabase
+import com.aboimov.poltava_ar.database.MonumentEntity
 import com.aboimov.poltava_ar.features.detector.MonumentDetector
 import com.aboimov.poltava_ar.features.detector.OverlayView
 import com.aboimov.poltava_ar.features.embedder.MonumentEmbedder
 import com.aboimov.poltava_ar.features.embedder.MonumentMatcher
 import com.aboimov.poltava_ar.features.embedder.RecognizedMonument
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.concurrent.Executors
 
@@ -42,6 +44,10 @@ fun CameraDetectorScreen() {
     }
 
     var recognizedMonument by remember { mutableStateOf<RecognizedMonument?>(null) }
+
+    var isExpended by remember { mutableStateOf(false) }
+    var monumentDetails by remember { mutableStateOf<MonumentEntity?>(null) }
+    val coroutineScope = rememberCoroutineScope()
 
     val database = remember { AppDatabase.getDatabase(context) }
     val dao = remember { database.monumentDao() }
@@ -89,7 +95,8 @@ fun CameraDetectorScreen() {
                         cameraExecutor = cameraExecutor,
                         overlayView = overlayView,
                         onMonumentRecognized = { match ->
-                            recognizedMonument = match
+                            if (!isExpended)
+                                recognizedMonument = match
                         }
                     )
                 }
@@ -112,12 +119,29 @@ fun CameraDetectorScreen() {
                     .zIndex(3f)
             ) {
                 recognizedMonument?.let { monument ->
-                    RecognitionMonumentCard(
-                        monument = monument,
-                        onMoreClick = {
-                            
-                        }
-                    )
+                    if (isExpended) {
+                        MoreInfoMonumentScreen(
+                            monument = monument,
+                            details = monumentDetails,
+                            onClose = {
+                                isExpended = false
+                                monumentDetails = null
+                            }
+                        )
+                    } else {
+                        RecognitionMonumentCard(
+                            monument = monument,
+                            onMoreClick = {
+                                isExpended = true
+                                coroutineScope.launch(Dispatchers.IO){
+                                    val details = dao.getMonumentDetails(monument.monumentId)
+                                    withContext(Dispatchers.Main){
+                                        monumentDetails = details
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

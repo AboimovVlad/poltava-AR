@@ -13,11 +13,10 @@ class YoloPostProcessor(
         var maxConfInFrame = 0f
         val candidates = mutableListOf<DetectionResult>()
 
-        val dim1 = output.size          // Первое измерение (обычно 5, 8400 или 300)
-        val dim2 = output[0].size       // Второе измерение (обычно 8400, 5 или 6)
+        val dim1 = output.size
+        val dim2 = output[0].size
 
         if (dim1 == 5 && dim2 > 100) {
-            // Вариант А: Стандартный выход YOLO11 [5, 8400]
             for (i in 0 until dim2) {
                 val conf = output[4][i]
                 if (conf > maxConfInFrame) maxConfInFrame = conf
@@ -26,7 +25,6 @@ class YoloPostProcessor(
                 }
             }
         } else if (dim1 > 100 && dim2 == 5) {
-            // Вариант Б: Транспонированный выход YOLO11 [8400, 5]
             for (i in 0 until dim1) {
                 val conf = output[i][4]
                 if (conf > maxConfInFrame) maxConfInFrame = conf
@@ -35,7 +33,6 @@ class YoloPostProcessor(
                 }
             }
         } else if (dim2 == 6) {
-            // Вариант В: Экспорт с встроенным NMS [300, 6] -> [x1, y1, x2, y2, conf, classId]
             for (i in 0 until dim1) {
                 val conf = output[i][4]
                 if (conf > maxConfInFrame) maxConfInFrame = conf
@@ -89,7 +86,6 @@ class YoloPostProcessor(
         zeroPoint: Int,
         isSignedInt8: Boolean
     ): List<DetectionResult> {
-        // Конвертируем ByteArray во FloatArray и вызываем общий метод
         val floatOutput = Array(output.size) { r ->
             FloatArray(output[r].size) { c ->
                 val raw = if (isSignedInt8) output[r][c].toInt() else (output[r][c].toInt() and 0xFF)

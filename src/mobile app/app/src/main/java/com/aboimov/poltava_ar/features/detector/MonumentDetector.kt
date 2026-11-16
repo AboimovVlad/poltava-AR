@@ -40,7 +40,6 @@ class MonumentDetector(
 
         val inputTensor = interpreter.getInputTensor(0)
         val inShape = inputTensor.shape()
-        // Проверяем, является ли формат входного тензора NCHW: [1, 3, 640, 640]
         val idxChannelsIn = 1
         isNCHW = inShape.size == 4 && inShape[idxChannelsIn] == 3
 
@@ -103,7 +102,6 @@ class MonumentDetector(
                 writeChannel(buffer, (pixel and 0xFF) / 255.0f)
             }
         } else {
-            // Классический формат TFLite: R, G, B подряд для каждого пикселя
             for (pixel in pixels) {
                 writeChannel(buffer, ((pixel shr 16) and 0xFF) / 255.0f)
                 writeChannel(buffer, ((pixel shr 8) and 0xFF) / 255.0f)

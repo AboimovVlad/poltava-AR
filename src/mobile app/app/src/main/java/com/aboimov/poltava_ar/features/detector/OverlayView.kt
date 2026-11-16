@@ -42,8 +42,6 @@ class OverlayView(context: Context) : View(context) {
             val top = box.top * height
             val rawBottom = box.bottom * height
 
-            // Подтягиваем нижнюю границу вверх на 18% от высоты рамки,
-            // чтобы убрать пустой запас под постамент и компенсировать вытягивание экрана
             val boxHeight = rawBottom - top
             val bottom = (rawBottom - boxHeight * 0.18f).coerceAtLeast(top + 120f)
             val right = (box.right * width).coerceAtLeast(left + 120f)

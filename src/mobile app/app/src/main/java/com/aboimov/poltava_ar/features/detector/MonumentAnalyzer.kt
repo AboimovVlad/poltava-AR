@@ -47,7 +47,6 @@ class MonumentAnalyzer(
                     }
                 }
             } else {
-                // Якщо об'єкт зник із кадру — прибираємо плашку
                 onMonumentRecognized(null)
             }
         } catch (e: Exception) {
